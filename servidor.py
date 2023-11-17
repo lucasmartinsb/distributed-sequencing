@@ -5,11 +5,6 @@ import xmlrpc.server
 from io import StringIO
 import time
 
-# Definindo a função para somar dois números
-def oi(name : str):
-    print(f"Um cliente ({name}) me chamou")
-    return f"Olá {name}"
-
 def calculate_similarity(seq1, seq2):
     alignments = pairwise2.align.globalxx(seq1, seq2, one_alignment_only=True)
     score = alignments[0].score
