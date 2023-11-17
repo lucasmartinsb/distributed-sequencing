@@ -1,50 +1,27 @@
 import warnings
 warnings.filterwarnings("ignore")
-from Bio.Seq import Seq
-from Bio import pairwise2
 import time
 import sys
+from acha_pares_similares import acha_pares_similares_sequencial
 
-def calculate_similarity(seq1, seq2):
-    alignments = pairwise2.align.globalxx(seq1, seq2, one_alignment_only=True)
-    score = alignments[0].score
-    similarity = score / max(len(seq1), len(seq2))
-    return similarity
-
-def find_most_similar_pairs(sequences):
-    num_sequences = len(sequences)
-    most_similar_pairs = []
-    max_similarity = 0
-
-    for i in range(num_sequences):
-        for j in range(i + 1, num_sequences):
-            similarity = calculate_similarity(sequences[i], sequences[j])
-            if similarity > max_similarity:
-                max_similarity = similarity
-                most_similar_pairs = [(i, j)]
-            elif similarity == max_similarity:
-                most_similar_pairs.append((i, j))
-
-    return most_similar_pairs, max_similarity
-
-def process(sequences_str : list[str]):
-    start = time.time()
+def processa(sequencias_list : list):
+    tempo_inicio = time.time()
     
     # Encontrar os pares mais similares e a similaridade geral
-    most_similar_pairs, overall_similarity = find_most_similar_pairs(sequences_str)
+    pares_mais_similares, similaridade = acha_pares_similares_sequencial(sequencias_list)
     
-    end = time.time()
+    tempo_fim = time.time()
     
     # Imprimir os resultados
-    return (f"Sequências mais similares são {most_similar_pairs} com uma similaridade de {overall_similarity:.2%}.", end - start)
+    return (f"Sequências mais similares são {pares_mais_similares} com uma similaridade de {similaridade:.2%}.", tempo_fim - tempo_inicio)
 
 if __name__ == '__main__':
-    inFile = sys.argv[1]
-    sequences_str = []
-    with open(inFile,'r') as inputFile:
-        for line in inputFile:
+    arquivo_entrada = sys.argv[1]
+    sequencias_list = []
+    with open(arquivo_entrada,'r') as arquivo_entrada:
+        for linha in arquivo_entrada:
             # Remove espaços em branco e caracteres de nova linha
-            sequence = line.strip()
+            sequence = linha.strip()
             # Adiciona o item à lista
-            sequences_str.append(sequence)
-    print(process(sequences_str=sequences_str))
+            sequencias_list.append(sequence)
+    print(processa(sequencias_list=sequencias_list))
