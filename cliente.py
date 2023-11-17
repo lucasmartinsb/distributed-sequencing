@@ -6,7 +6,6 @@ proxy = xmlrpc.client.ServerProxy("http://localhost:8001")
 with open("input.csv") as f:
     data = f.read()
 
-resposta = proxy.processar(data)
+resposta = proxy.processar_mpi(data)
 
 print(xmlrpc.client.dumps((resposta,)))
-print(resposta)
