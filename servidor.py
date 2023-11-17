@@ -29,11 +29,11 @@ def processamento(data_str : str, paralelizacao : str, nucleos : str = None):
     
     if paralelizacao == 'mpi':
         if nucleos != None:
-            return process_mpi(nucleos=int(nucleos))
+            return process_mpi(nucleos=int(nucleos)).strip()
         else:
             return "Faltou a quantidade de nucleos amigao"
     elif paralelizacao == 'sequencial':
-        return processamento_sequencial()
+        return processamento_sequencial().strip()
 
 if __name__ == '__main__':
     #Cria o server

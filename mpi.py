@@ -15,32 +15,33 @@ def processa(sequencias_list : list[str]):
         sequencias.append(sequencia)
 
     # Distribuir o trabalho entre os processos
-    chunk_size = len(sequencias) // size
-    start_index = rank * chunk_size
-    end_index = start_index + chunk_size if rank < size - 1 else len(sequencias)
+    tamanho_processo = len(sequencias) // size
+    indice_inicio = rank * tamanho_processo
+    indice_final = indice_inicio + tamanho_processo if rank < size - 1 else len(sequencias)
 
-    local_most_similar_pairs, local_max_similarity = acha_pares_similares_mpi(sequencias, start_index, end_index)
+    pares_mais_similares_local, similaridade_local = acha_pares_similares_mpi(sequencias=sequencias, indice_inicio=indice_inicio, indice_final=indice_final)
 
     # Coletar os resultados de todos os processos
-    all_most_similar_pairs = comm.gather(local_most_similar_pairs, root=0)
-    all_max_similarity = comm.gather(local_max_similarity, root=0)
+    pares_mais_similares_total = comm.gather(pares_mais_similares_local, root=0)
+    similaridade_total = comm.gather(similaridade_local, root=0)
 
     if rank == 0:
         # Encontrar o valor máximo da similaridade
-        max_similarity = max(all_max_similarity)
+        similaridade_maxima = max(similaridade_total)
 
         # Encontrar os índices dos pares que têm a maior similaridade
-        max_similarity_indices = [i for i, similarity in enumerate(all_max_similarity) if similarity == max_similarity]
+        similaridade_maxima_indice = [i for i, similaridade in enumerate(similaridade_total) if similaridade == similaridade_maxima]
 
         # Obter os pares correspondentes usando os índices encontrados
-        max_similarity_pairs = [pair for i in max_similarity_indices for pair in all_most_similar_pairs[i]]
+        pares_mais_similares_maximo = [par for i in similaridade_maxima_indice for par in pares_mais_similares_total[i]]
 
 
         end = time.time()
 
         # Imprimir os resultados
-        return f"""Sequências mais similares são {max_similarity_pairs} com uma similaridade de {max_similarity:.2%}\nTempo total de execução: {end - tempo_inicio} segundos"""
-
+        return f"""Sequências mais similares são {pares_mais_similares_maximo} com uma similaridade de {similaridade_maxima:.2%}\nTempo total de execução: {end - tempo_inicio} segundos"""
+    else:
+        return ""
 # Exemplo de uso
 if __name__ == "__main__":
     inFile = sys.argv[1]
@@ -51,4 +52,5 @@ if __name__ == "__main__":
             sequence = line.strip()
             # Adiciona o item à lista
             sequences_str.append(sequence)
-    print(processa(sequences_str))
+    resultado = processa(sequences_str)
+    print(resultado)
