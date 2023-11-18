@@ -1,6 +1,6 @@
 from calcula_similaridade import calcula_similaridade
 
-def acha_pares_similares_sequencial(sequencias):
+def acha_pares_similares(sequencias):
     quant_sequencias = len(sequencias)
     pares_mais_similares = []
     similaridade_maxima = 0

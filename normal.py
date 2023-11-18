@@ -1,12 +1,12 @@
 import time
 import sys
-from acha_pares_similares import acha_pares_similares_sequencial
+from acha_pares_similares import acha_pares_similares
 
 def processa(sequencias_list : list):
     tempo_inicio = time.time()
     
     # Encontrar os pares mais similares e a similaridade geral
-    pares_mais_similares, similaridade = acha_pares_similares_sequencial(sequencias_list)
+    pares_mais_similares, similaridade = acha_pares_similares(sequencias_list)
     
     tempo_fim = time.time()
     

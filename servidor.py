@@ -13,13 +13,18 @@ def cria_arquivo_temporario(data_str : str):
         for sequence in sequences_list:
             file.write(f"{sequence}\n")
 
-def processamento_sequencial():
-    result = subprocess.run("python3 ./sequencial.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
+def processamento_normal():
+    result = subprocess.run("python3 ./normal.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
     os.remove('temp_input')
     return result.stdout
 
 def processamento_mpi(threads : int):
     result = subprocess.run(f"mpiexec -n {threads} python3 ./mpi.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
+    os.remove('temp_input')
+    return result.stdout
+
+def processamento_multithreading(threads : int):
+    result = subprocess.run(f"python3 ./thread.py ./temp_input {threads}", shell=True, stdout=subprocess.PIPE, text=True)
     os.remove('temp_input')
     return result.stdout
 
@@ -33,7 +38,7 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
         else:
             return "Faltou a quantidade de nucleos amigao"
     elif paralelizacao == 'sequencial':
-        return processamento_sequencial().strip()
+        return processamento_normal().strip()
 
 if __name__ == '__main__':
     #Cria o server
