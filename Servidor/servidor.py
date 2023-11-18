@@ -15,13 +15,13 @@ def cria_arquivo_temporario(data_str : str):
         for sequence in sequences_list:
             file.write(f"{sequence}\n")
 
-def processamento_normal():
-    result = subprocess.run("python3 ./normal.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
+def processamento_sequencial():
+    result = subprocess.run("python3 ./sequencial.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
     os.remove('temp_input')
     return result.stdout
 
 def processamento_mpi(threads : int):
-    result = subprocess.run(f"mpiexec -n {threads} python3 ./mpi.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
+    result = subprocess.run(f"mpiexec -f ./cluster.txt -n {threads} python3 ./mpi.py ./temp_input", shell=True, stdout=subprocess.PIPE, text=True)
     os.remove('temp_input')
     return result.stdout
 
@@ -49,7 +49,7 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
     elif paralelizacao == 'multithreading':
         resultado = processamento_multithreading(threads=int(threads)).strip()
     elif paralelizacao == 'sequencial':
-        resultado = processamento_normal().strip()
+        resultado = processamento_sequencial().strip()
 
     print(f"    {datetime.now()} - Finalizou\n")
     return resultado
