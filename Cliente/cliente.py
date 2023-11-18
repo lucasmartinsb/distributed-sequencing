@@ -1,5 +1,17 @@
 import xmlrpc.client
 import os
+import xml.etree.ElementTree as ET
+import ast
+
+def xml_to_dict(xml_string):
+    root = ET.fromstring(xml_string)
+    result = {}
+    for child in root:
+        if len(child) == 0:
+            result[child.tag] = child.text
+        else:
+            result[child.tag] = xml_to_dict(ET.tostring(child))
+    return result
 
 def menu():
     modo_paralelizacao = input(
@@ -35,11 +47,19 @@ def chama_processamento(data, modo_paralelizacao, threads):
         resposta = proxy.processamento(data, modo_paralelizacao)
     else:
         resposta = proxy.processamento(data, modo_paralelizacao, threads)
-    return xmlrpc.client.dumps((resposta,))
+    resposta_xml = xml_to_dict(xmlrpc.client.dumps((resposta,)))
+    resposta_str = resposta_xml["param"]["value"]["string"]
+    resposta_str = resposta_str.replace("\'", "\"")
+    resposta_dict = ast.literal_eval(resposta_str)
+    return resposta_dict
 
 if __name__ == '__main__':
     with open("input.csv") as f:
         data = f.read()
     modo_paralelizacao, threads = menu()
     resultado = chama_processamento(data=data, modo_paralelizacao=modo_paralelizacao, threads=threads)
-    print(resultado)
+    print(f"""
+    Pares: {resultado['Pares']}
+    Similaridade: {resultado['Similaridade']}
+    Tempo: {resultado['Tempo']}
+    """)
