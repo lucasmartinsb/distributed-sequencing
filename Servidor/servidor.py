@@ -4,6 +4,7 @@ import xmlrpc.server
 from io import StringIO
 import subprocess
 import os
+from datetime import datetime
 
 def cria_arquivo_temporario(data_str : str):
     data = StringIO(data_str)
@@ -34,7 +35,11 @@ def processamento_multithreading(threads : int):
     return result.stdout
 
 def processamento(data_str : str, paralelizacao : str, threads : str = None):
-    print("Um cliente me chamou!")
+    print(f"""
+    {datetime.now()} - Um cliente me chamou!
+        Modo de paralelização: {paralelizacao}
+        Threads: {threads}
+    """)
     cria_arquivo_temporario(data_str=data_str)
     
     if paralelizacao == 'mpi':

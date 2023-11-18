@@ -10,8 +10,11 @@ def processa(sequencias_list : list):
     
     tempo_fim = time.time()
     
-    # Imprimir os resultados
-    return (f"Sequências mais similares são {pares_mais_similares} com uma similaridade de {similaridade:.2%}.", tempo_fim - tempo_inicio)
+    return {
+        'Pares' : pares_mais_similares,
+        'Similaridade' : f"{similaridade:.2%}",
+        'Tempo' : tempo_fim - tempo_inicio
+    } 
 
 def acha_pares_similares(sequencias):
     quant_sequencias = len(sequencias)

@@ -38,9 +38,12 @@ def processa(sequencias_list, num_threads):
     pares_mais_similares_maximo = [par for i in similaridade_maxima_indice for par in pares_mais_similares_total[i]]
 
     tempo_fim = time.time()
-
-    # Imprimir os resultados
-    return f"""Sequências mais similares são {pares_mais_similares_maximo} com uma similaridade de {similaridade_maxima:.2%}\nTempo total de execução: {tempo_fim - tempo_inicio} segundos"""
+    
+    return {
+        'Pares' : pares_mais_similares_maximo,
+        'Similaridade' : f"{similaridade_maxima:.2%}",
+        'Tempo' : tempo_fim - tempo_inicio
+    } 
 
 def acha_pares_similares(sequencias, indice_inicio, indice_final, resultados):
     quant_sequencias = len(sequencias)
