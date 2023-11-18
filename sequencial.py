@@ -1,5 +1,3 @@
-import warnings
-warnings.filterwarnings("ignore")
 import time
 import sys
 from acha_pares_similares import acha_pares_similares_sequencial
