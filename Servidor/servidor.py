@@ -23,8 +23,8 @@ def processamento_mpi(threads : int):
     os.remove('temp_input')
     return result.stdout
 
-def processamento_multithreading(threads : int):
-    result = subprocess.run(f"python3 ./thread.py ./temp_input {threads}", shell=True, stdout=subprocess.PIPE, text=True)
+def processamento_multiprocessing(threads : int):
+    result = subprocess.run(f"python3 ./multiprocessing.py ./temp_input {threads}", shell=True, stdout=subprocess.PIPE, text=True)
     os.remove('temp_input')
     return result.stdout
 
@@ -35,6 +35,11 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
     if paralelizacao == 'mpi':
         if threads != None:
             return processamento_mpi(threads=int(threads)).strip()
+        else:
+            return "Faltou a quantidade de nucleos amigao"
+    elif paralelizacao == 'multiprocessing':
+        if threads != None:
+            return processamento_multiprocessing(threads=int(threads)).strip()
         else:
             return "Faltou a quantidade de nucleos amigao"
     elif paralelizacao == 'sequencial':
