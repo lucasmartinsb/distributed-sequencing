@@ -5,6 +5,7 @@ from io import StringIO
 import subprocess
 import os
 from datetime import datetime
+import json
 
 def cria_arquivo_temporario(data_str : str):
     data = StringIO(data_str)
@@ -38,27 +39,20 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
     print(f"""
     {datetime.now()} - Um cliente me chamou!
         Modo de paralelização: {paralelizacao}
-        Threads: {threads}
-    """)
+        Threads: {threads}""")
     cria_arquivo_temporario(data_str=data_str)
-    
+
     if paralelizacao == 'mpi':
-        if threads != None:
-            return processamento_mpi(threads=int(threads)).strip()
-        else:
-            return "Faltou a quantidade de nucleos amigao"
+        resultado = processamento_mpi(threads=int(threads)).strip()
     elif paralelizacao == 'multiprocessing':
-        if threads != None:
-            return processamento_multiprocessing(threads=int(threads)).strip()
-        else:
-            return "Faltou a quantidade de nucleos amigao"
+        resultado = processamento_multiprocessing(threads=int(threads)).strip()
     elif paralelizacao == 'multithreading':
-        if threads != None:
-            return processamento_multithreading(threads=int(threads)).strip()
-        else:
-            return "Faltou a quantidade de nucleos amigao"
+        resultado = processamento_multithreading(threads=int(threads)).strip()
     elif paralelizacao == 'sequencial':
-        return processamento_normal().strip()
+        resultado = processamento_normal().strip()
+
+    print(f"    {datetime.now()} - Finalizou\n")
+    return resultado
 
 if __name__ == '__main__':
     #Cria o server
