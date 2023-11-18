@@ -1,6 +1,6 @@
 import time
 import sys
-from acha_pares_similares import acha_pares_similares
+from calcula_similaridade import calcula_similaridade
 
 def processa(sequencias_list : list):
     tempo_inicio = time.time()
@@ -12,6 +12,22 @@ def processa(sequencias_list : list):
     
     # Imprimir os resultados
     return (f"Sequências mais similares são {pares_mais_similares} com uma similaridade de {similaridade:.2%}.", tempo_fim - tempo_inicio)
+
+def acha_pares_similares(sequencias):
+    quant_sequencias = len(sequencias)
+    pares_mais_similares = []
+    similaridade_maxima = 0
+
+    for i in range(quant_sequencias):
+        for j in range(i + 1, quant_sequencias):
+            similaridade = calcula_similaridade(sequencias[i], sequencias[j])
+            if similaridade > similaridade_maxima:
+                similaridade_maxima = similaridade
+                pares_mais_similares = [(i, j)]
+            elif similaridade == similaridade_maxima:
+                pares_mais_similares.append((i, j))
+
+    return pares_mais_similares, similaridade_maxima
 
 if __name__ == '__main__':
     arquivo_entrada = sys.argv[1]

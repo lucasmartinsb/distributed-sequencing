@@ -1,7 +1,7 @@
 from mpi4py import MPI
 import time
 import sys
-from acha_pares_similares import acha_pares_similares_mpi
+from calcula_similaridade import calcula_similaridade
 
 def processa(sequencias_list : list[str]):
     comm = MPI.COMM_WORLD
@@ -10,16 +10,12 @@ def processa(sequencias_list : list[str]):
 
     tempo_inicio = time.time()
 
-    sequencias = []
-    for sequencia in sequencias_list:
-        sequencias.append(sequencia)
-
     # Distribuir o trabalho entre os processos
-    tamanho_processo = len(sequencias) // size
+    tamanho_processo = len(sequencias_list) // size
     indice_inicio = rank * tamanho_processo
-    indice_final = indice_inicio + tamanho_processo if rank < size - 1 else len(sequencias)
+    indice_final = indice_inicio + tamanho_processo if rank < size - 1 else len(sequencias_list)
 
-    pares_mais_similares_local, similaridade_local = acha_pares_similares_mpi(sequencias=sequencias, indice_inicio=indice_inicio, indice_final=indice_final)
+    pares_mais_similares_local, similaridade_local = acha_pares_similares(sequencias=sequencias_list, indice_inicio=indice_inicio, indice_final=indice_final)
 
     # Coletar os resultados de todos os processos
     pares_mais_similares_total = comm.gather(pares_mais_similares_local, root=0)
@@ -42,6 +38,23 @@ def processa(sequencias_list : list[str]):
         return f"""Sequências mais similares são {pares_mais_similares_maximo} com uma similaridade de {similaridade_maxima:.2%}\nTempo total de execução: {end - tempo_inicio} segundos"""
     else:
         return ""
+    
+def acha_pares_similares(sequencias, indice_inicio, indice_final):
+    quant_sequencias = len(sequencias)
+    pares_mais_similares = []
+    similaridade_maxima = 0
+
+    for i in range(indice_inicio, indice_final):
+        for j in range(i + 1, quant_sequencias):
+            similaridade = calcula_similaridade(sequencias[i], sequencias[j])
+            if similaridade > similaridade_maxima:
+                similaridade_maxima = similaridade
+                pares_mais_similares = [(i, j)]
+            elif similaridade == similaridade_maxima:
+                pares_mais_similares.append((i, j))
+
+    return pares_mais_similares, similaridade_maxima
+
 # Exemplo de uso
 if __name__ == "__main__":
     inFile = sys.argv[1]
