@@ -71,4 +71,4 @@ if __name__ == '__main__':
             # Adiciona o item à lista
             sequencias_list.append(sequence)
 
-    print(processa(sequencias_list=sequencias_list, num_threads=num_threads))
+    print(processa(sequencias_list=sequencias_list, num_threads=int(num_threads)))
