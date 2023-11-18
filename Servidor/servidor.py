@@ -28,6 +28,11 @@ def processamento_multiprocessing(threads : int):
     os.remove('temp_input')
     return result.stdout
 
+def processamento_multithreading(threads : int):
+    result = subprocess.run(f"python3 ./multithreading.py ./temp_input {threads}", shell=True, stdout=subprocess.PIPE, text=True)
+    os.remove('temp_input')
+    return result.stdout
+
 def processamento(data_str : str, paralelizacao : str, threads : str = None):
     print("Um cliente me chamou!")
     cria_arquivo_temporario(data_str=data_str)
@@ -40,6 +45,11 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
     elif paralelizacao == 'multiprocessing':
         if threads != None:
             return processamento_multiprocessing(threads=int(threads)).strip()
+        else:
+            return "Faltou a quantidade de nucleos amigao"
+    elif paralelizacao == 'multithreading':
+        if threads != None:
+            return processamento_multithreading(threads=int(threads)).strip()
         else:
             return "Faltou a quantidade de nucleos amigao"
     elif paralelizacao == 'sequencial':
