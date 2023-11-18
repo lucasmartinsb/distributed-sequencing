@@ -1,6 +1,7 @@
 from Bio.Seq import Seq
 import pandas as pd
-import xmlrpc.server
+import socket
+import threading
 from io import StringIO
 import subprocess
 import os
@@ -54,14 +55,33 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
     print(f"    {datetime.now()} - Finalizou\n")
     return resultado
 
-if __name__ == '__main__':
-    #Cria o server
-    server = xmlrpc.server.SimpleXMLRPCServer(("localhost", 4200))
-
-    #Registra a funcao
-    server.register_function(processamento, "processamento")
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("localhost", 4200))
+    server.listen(5)
     print("Iniciando server...")
 
-    # Mantem em execução
-    server.serve_forever() 
+    while True:
+        client, addr = server.accept()
+        handle_client(client)
+
+def handle_client(client_socket):
+    data_parts = []
     
+    while True:
+        part = client_socket.recv(1024).decode('utf-8')
+        if not part:
+            break
+        data_parts.append(part)
+
+    full_data = ''.join(data_parts)
+    data_str, paralelizacao, threads = full_data.split(',')
+    print(paralelizacao)
+    print(threads)
+    
+    resposta = processamento(data_str=data_str, paralelizacao=paralelizacao, threads=threads)
+    client_socket.send(resposta.encode('utf-8'))
+    client_socket.close()
+
+if __name__ == '__main__':
+    start_server()

@@ -2,6 +2,7 @@ import xmlrpc.client
 import os
 import xml.etree.ElementTree as ET
 import ast
+import socket
 
 def xml_to_dict(xml_string):
     root = ET.fromstring(xml_string)
@@ -40,17 +41,22 @@ def menu():
                 menu()
     return relacao_paralelizacao[modo_paralelizacao], threads
 
+def send_data(client_socket, data):
+    client_socket.send(data.encode('utf-8'))
+
 def chama_processamento(data, modo_paralelizacao, threads):
-    # Criando o proxy para acessar o servidor RPC
-    proxy = xmlrpc.client.ServerProxy("http://localhost:4200")
-    if threads is None:
-        resposta = proxy.processamento(data, modo_paralelizacao)
-    else:
-        resposta = proxy.processamento(data, modo_paralelizacao, threads)
-    resposta_xml = xml_to_dict(xmlrpc.client.dumps((resposta,)))
-    resposta_str = resposta_xml["param"]["value"]["string"]
-    resposta_str = resposta_str.replace("\'", "\"")
-    resposta_dict = ast.literal_eval(resposta_str)
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(("localhost", 4200))
+    
+    # Enviar dados em partes
+    send_data(client, data)
+    send_data(client, f",{modo_paralelizacao},{threads}")
+    client.shutdown(socket.SHUT_WR)
+
+    resposta = client.recv(1024).decode('utf-8')
+    resposta_dict = ast.literal_eval(resposta)
+    
+    client.close()
     return resposta_dict
 
 if __name__ == '__main__':
