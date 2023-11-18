@@ -36,7 +36,7 @@ def processamento_multithreading(threads : int):
     return result.stdout
 
 def processamento(data_str : str, paralelizacao : str, threads : str = None):
-    print(f"""
+    print(f"""\n
     {datetime.now()} - Um cliente me chamou!
         Modo de paralelização: {paralelizacao}
         Threads: {threads}""")
