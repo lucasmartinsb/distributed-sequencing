@@ -57,7 +57,7 @@ def processamento(data_str : str, paralelizacao : str, threads : str = None):
 
 if __name__ == '__main__':
     #Cria o server
-    server = xmlrpc.server.SimpleXMLRPCServer(("localhost", 8001))
+    server = xmlrpc.server.SimpleXMLRPCServer(("localhost", 4200))
 
     #Registra a funcao
     server.register_function(processamento, "processamento")
