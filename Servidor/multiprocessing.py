@@ -1,7 +1,6 @@
 import time
 import sys
 from calcula_similaridade import calcula_similaridade
-import os 
 from multiprocess import Pool
 
 def processa(sequencias_list):

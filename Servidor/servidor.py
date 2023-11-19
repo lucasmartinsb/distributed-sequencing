@@ -1,12 +1,10 @@
 from Bio.Seq import Seq
 import pandas as pd
 import socket
-import threading
 from io import StringIO
 import subprocess
 import os
 from datetime import datetime
-import json
 
 def cria_arquivo_temporario(data_str : str):
     data = StringIO(data_str)
