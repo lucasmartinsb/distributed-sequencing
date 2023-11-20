@@ -74,8 +74,6 @@ def handle_client(client_socket):
 
     full_data = ''.join(data_parts)
     data_str, paralelizacao, threads = full_data.split(',')
-    print(paralelizacao)
-    print(threads)
     
     resposta = processamento(data_str=data_str, paralelizacao=paralelizacao, threads=threads)
     client_socket.send(resposta.encode('utf-8'))

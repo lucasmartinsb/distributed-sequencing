@@ -60,6 +60,7 @@ def chama_processamento(data, modo_paralelizacao, threads):
 if __name__ == '__main__':
     with open("input.csv") as f:
         data = f.read()
+    data = data.replace(",", ".")
     modo_paralelizacao, threads = menu()
     resultado = chama_processamento(data=data, modo_paralelizacao=modo_paralelizacao, threads=threads)
     print(f"""
