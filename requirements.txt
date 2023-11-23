@@ -1,0 +1,4 @@
+Bio==1.6.0
+mpi4py==3.1.5
+multiprocess==0.70.15
+pandas==1.5.1
